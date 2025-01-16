@@ -12,8 +12,8 @@ public class Main {
         System.out.println("Welcome to the Game Library! Here you can explore an internal library of games " +
                 "and Create, Read, Update and Delete games at will.");
 
-        // Game game = GameService.createGame();
+        Game game = GameService.createGame();
 
-        GameService.readFile("Forza Horizon 5");
+        GameService.updateGameName(game.getName(), "Forza Horzion 4");
     }
 }

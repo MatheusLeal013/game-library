@@ -61,7 +61,7 @@ public class GameService {
         return game;
     }
 
-    public static void readFile(String gameName) {
+    public static void readGame(String gameName) {
 
         String path = "file-library/" + gameName + ".txt";
 
@@ -73,6 +73,41 @@ public class GameService {
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());
+        }
+    }
+
+    public static void deleteGame(String gameName) {
+
+        String path = "file-library/" + gameName + ".txt";
+
+        File file = new File(path);
+
+        try {
+            file.delete();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void updateGameName(String gameName, String newGameName) {
+
+        String path = "file-library/" + gameName + ".txt";
+
+        File file = new File(path);
+
+        File pathNew = new File ("file-library/" + newGameName + ".txt");
+
+        try (BufferedReader bf = new BufferedReader(new FileReader(path))){
+            String line = bf.readLine();
+
+            do {
+                
+            } while (line != "Game:" + newGameName);
+
+            file.renameTo(pathNew);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
