@@ -3,17 +3,73 @@ package main.java.services;
 import main.java.entities.Game;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Stream;
 
 public class GameService {
 
-    public static Game createGame() {
-        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-        Scanner sc = new Scanner(System.in);
+    private final static DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+    private final static Scanner sc = new Scanner(System.in);
 
+    public static List<Game> init() throws IOException {
+
+        Stream<Path> stream = Files.list(Path.of("file-library/"));
+
+        List<Path> files = stream.toList();
+
+        List<Game> games = new ArrayList<>();
+
+        for (Path p : files) {
+            try (BufferedReader bf = new BufferedReader(new FileReader(p.toString()))) {
+                String line = bf.readLine();
+                String gameName = "";
+                String studio = "";
+                String genre = "";
+                StringBuilder synopsis = new StringBuilder();
+                LocalDate releaseDate = null;
+                while (line != null) {
+                    if (line.contains("Game Name: ")) {
+                        String[] a = line.split(": ");
+                        gameName = a[1];
+                        line = bf.readLine();
+                    }
+                    if (line.contains("Release Date: ")) {
+                        String[] a = line.split(": ");
+                        releaseDate = LocalDate.parse(a[1], fmt);
+                        line = bf.readLine();
+                    }
+                    if (line.contains("Studio: ")) {
+                        String[] a = line.split(": ");
+                        studio = a[1];
+                        line = bf.readLine();
+                    }
+                    if (line.contains("Genre: ")) {
+                        String[] a = line.split(": ");
+                        genre = a[1];
+                        line = bf.readLine();
+                    }
+                    if (line.contains("Synopsis:")) {
+                        do {
+                            line = bf.readLine();
+                            synopsis.append(line);
+                        } while (line != null);
+                    }
+                    games.add(new Game(gameName, releaseDate, studio, genre, synopsis.toString()));
+                }
+            }
+        }
+
+        return games;
+    }
+
+    public static Game createGame(List<Game> games) {
         System.out.print("Name: ");
         String name = sc.nextLine();
         System.out.print("Release Date: ");
@@ -33,9 +89,9 @@ public class GameService {
             }
             synopsis.append(line).append("\n");
         }
+        Game game = new Game(name, releaseDate, studio, genre, synopsis.toString());;
 
-
-        Game game = new Game(name, releaseDate, studio, genre, synopsis.toString());
+        games.add(game);
 
         String path = "file-library/" + game.getName() + ".txt";
 
@@ -62,7 +118,6 @@ public class GameService {
     }
 
     public static void readGame(String gameName) {
-
         String path = "file-library/" + gameName + ".txt";
 
         try (BufferedReader bf = new BufferedReader(new FileReader(path))){
@@ -89,26 +144,27 @@ public class GameService {
         }
     }
 
-    public static void updateGameName(String gameName, String newGameName) {
-
+    // Refazer
+    public static void updateGameName(String gameName, String newGameName) throws IOException {
         String path = "file-library/" + gameName + ".txt";
 
-        File file = new File(path);
+        File pathNew = new File("file-library/" + newGameName + ".txt");
 
-        File pathNew = new File ("file-library/" + newGameName + ".txt");
-
-        try (BufferedReader bf = new BufferedReader(new FileReader(path))){
-            String line = bf.readLine();
-
-            do {
-                
-            } while (line != "Game:" + newGameName);
-
-            file.renameTo(pathNew);
-        }
-        catch (Exception e) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(pathNew))) {
+            bw.write("Game Name: " + newGameName);
+            bw.newLine();
+            try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+                br.readLine();
+                String line = br.readLine();
+                do {
+                    bw.write(line);
+                    bw.newLine();
+                    line = br.readLine();
+                } while (line != null);
+            }
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        GameService.deleteGame(gameName);
     }
-
 }
