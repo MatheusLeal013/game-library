@@ -16,8 +16,8 @@ public class Main {
 
 
         try {
-            //GameService.updateGameName("Forza Horizon 5", "Forza Horizon 6");
             List<Game> games = GameService.init();
+            GameService.updateGameName("Forza Horizon 8", "Forza Horizon 9", games);
             for (Game game : games) {
                 System.out.println(game);
             }

@@ -58,14 +58,14 @@ public class GameService {
                     if (line.contains("Synopsis:")) {
                         do {
                             line = bf.readLine();
-                            synopsis.append(line);
+                            synopsis.append(line).append("\n");
                         } while (line != null);
+                        synopsis.delete(synopsis.length() - 5, synopsis.length());
                     }
                     games.add(new Game(gameName, releaseDate, studio, genre, synopsis.toString()));
                 }
             }
         }
-
         return games;
     }
 
@@ -93,27 +93,8 @@ public class GameService {
 
         games.add(game);
 
-        String path = "file-library/" + game.getName() + ".txt";
+        GameService.instanceOfGameFile(game);
 
-        try (BufferedWriter bf = new BufferedWriter(new FileWriter(path))) {
-            bf.write("Game Name: " + game.getName());
-            bf.newLine();
-            bf.write("Release Date: " + game.getReleaseDate().format(fmt));
-            bf.newLine();
-            bf.write("Studio: " + game.getStudio());
-            bf.newLine();
-            bf.write("Genre: " + game.getGenre());
-            bf.newLine();
-            bf.write("Synopsis: ");
-            bf.newLine();
-            bf.write(   game.getSynopsis());
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-        catch (DateTimeException e) {
-            throw new DateTimeException(e.getMessage());
-        }
         return game;
     }
 
@@ -144,27 +125,38 @@ public class GameService {
         }
     }
 
-    // Refazer
-    public static void updateGameName(String gameName, String newGameName) throws IOException {
-        String path = "file-library/" + gameName + ".txt";
+    public static void updateGameName(String gameName, String newGameName, List<Game> list) {
 
-        File pathNew = new File("file-library/" + newGameName + ".txt");
-
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(pathNew))) {
-            bw.write("Game Name: " + newGameName);
-            bw.newLine();
-            try (BufferedReader br = new BufferedReader(new FileReader(path))) {
-                br.readLine();
-                String line = br.readLine();
-                do {
-                    bw.write(line);
-                    bw.newLine();
-                    line = br.readLine();
-                } while (line != null);
+        for (Game game : list) {
+            if (game.getName().equals(gameName)) {
+                GameService.deleteGame(game.getName());
+                game.setName(newGameName);
+                GameService.instanceOfGameFile(game);
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
-        GameService.deleteGame(gameName);
+    }
+
+    private static void instanceOfGameFile(Game game) {
+        String path = "file-library/" + game.getName() + ".txt";
+
+        try (BufferedWriter bf = new BufferedWriter(new FileWriter(path))) {
+            bf.write("Game Name: " + game.getName());
+            bf.newLine();
+            bf.write("Release Date: " + game.getReleaseDate().format(fmt));
+            bf.newLine();
+            bf.write("Studio: " + game.getStudio());
+            bf.newLine();
+            bf.write("Genre: " + game.getGenre());
+            bf.newLine();
+            bf.write("Synopsis: ");
+            bf.newLine();
+            bf.write(   game.getSynopsis());
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        catch (DateTimeException e) {
+            throw new DateTimeException(e.getMessage());
+        }
     }
 }
