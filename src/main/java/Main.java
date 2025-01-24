@@ -17,7 +17,10 @@ public class Main {
 
         try {
             List<Game> games = GameService.init();
-            GameService.updateGameName("Forza Horizon 8", "Forza Horizon 9", games);
+            // GameService.updateGameName("Forza Horizon 6", "Forza Horizon 7", games);
+            // GameService.deleteGame("Forza Horizon 4", games);
+            // GameService.updateSynopsis("Forza Horizon 7", games);
+            GameService.updateReleaseDate("Forza Horizon 7", "08/11/2018", games);
             for (Game game : games) {
                 System.out.println(game);
             }

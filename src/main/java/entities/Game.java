@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class Game {
 
-    private final static DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private final static DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
     private String name;
     private LocalDate releaseDate;

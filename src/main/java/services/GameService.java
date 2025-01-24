@@ -22,54 +22,56 @@ public class GameService {
 
         Stream<Path> stream = Files.list(Path.of("file-library/"));
 
-        List<Path> files = stream.toList();
-
         List<Game> games = new ArrayList<>();
 
-        for (Path p : files) {
-            try (BufferedReader bf = new BufferedReader(new FileReader(p.toString()))) {
-                String line = bf.readLine();
-                String gameName = "";
-                String studio = "";
-                String genre = "";
-                StringBuilder synopsis = new StringBuilder();
-                LocalDate releaseDate = null;
-                while (line != null) {
-                    if (line.contains("Game Name: ")) {
-                        String[] a = line.split(": ");
-                        gameName = a[1];
-                        line = bf.readLine();
-                    }
-                    if (line.contains("Release Date: ")) {
-                        String[] a = line.split(": ");
-                        releaseDate = LocalDate.parse(a[1], fmt);
-                        line = bf.readLine();
-                    }
-                    if (line.contains("Studio: ")) {
-                        String[] a = line.split(": ");
-                        studio = a[1];
-                        line = bf.readLine();
-                    }
-                    if (line.contains("Genre: ")) {
-                        String[] a = line.split(": ");
-                        genre = a[1];
-                        line = bf.readLine();
-                    }
-                    if (line.contains("Synopsis:")) {
-                        do {
+        stream.forEach(
+            p -> {
+                try (BufferedReader bf = new BufferedReader(new FileReader(p.toFile()))) {
+                    String line = bf.readLine();
+                    String gameName = "";
+                    String studio = "";
+                    String genre = "";
+                    StringBuilder synopsis = new StringBuilder();
+                    LocalDate releaseDate = null;
+                    while (line != null) {
+                        if (line.contains("Game Name: ")) {
+                            String[] a = line.split(": ");
+                            gameName = a[1];
                             line = bf.readLine();
-                            synopsis.append(line).append("\n");
-                        } while (line != null);
-                        synopsis.delete(synopsis.length() - 5, synopsis.length());
+                        }
+                        if (line.contains("Release Date: ")) {
+                            String[] a = line.split(": ");
+                            releaseDate = LocalDate.parse(a[1], fmt);
+                            line = bf.readLine();
+                        }
+                        if (line.contains("Studio: ")) {
+                            String[] a = line.split(": ");
+                            studio = a[1];
+                            line = bf.readLine();
+                        }
+                        if (line.contains("Genre: ")) {
+                            String[] a = line.split(": ");
+                            genre = a[1];
+                            line = bf.readLine();
+                        }
+                        if (line.contains("Synopsis:")) {
+                            do {
+                                line = bf.readLine();
+                                synopsis.append(line).append("\n");
+                            } while (line != null);
+                            synopsis.delete(synopsis.length() - 5, synopsis.length());
+                        }
+                        games.add(new Game(gameName, releaseDate, studio, genre, synopsis.toString()));
                     }
-                    games.add(new Game(gameName, releaseDate, studio, genre, synopsis.toString()));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
             }
-        }
+        );
         return games;
     }
 
-    public static Game createGame(List<Game> games) {
+    public static void createGame(List<Game> games) {
         System.out.print("Name: ");
         String name = sc.nextLine();
         System.out.print("Release Date: ");
@@ -89,13 +91,11 @@ public class GameService {
             }
             synopsis.append(line).append("\n");
         }
-        Game game = new Game(name, releaseDate, studio, genre, synopsis.toString());;
+        Game game = new Game(name, releaseDate, studio, genre, synopsis.toString());
 
         games.add(game);
 
-        GameService.instanceOfGameFile(game);
-
-        return game;
+        instanceOfGameFile(game);
     }
 
     public static void readGame(String gameName) {
@@ -112,26 +112,91 @@ public class GameService {
         }
     }
 
-    public static void deleteGame(String gameName) {
+    public static void deleteGameFile(String gameName) throws IOException {
+        Stream<Path> stream = Files.list(Path.of("file-library/"));
 
-        String path = "file-library/" + gameName + ".txt";
+        stream.forEach(
+                p -> {
+                    try {
+                        if (p.getFileName().toString().contains(gameName)) {
+                            p.toFile().delete();
+                        }
+                    }
+                    catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
 
-        File file = new File(path);
+                }
+        );
+    }
 
-        try {
-            file.delete();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+    public static void deleteGameList(String gameName, List<Game> games) throws IOException {
+        for (Game game : games) {
+            if (game.getName().equals(gameName)) {
+                deleteGameFile(gameName);
+                games.remove(game);
+            }
         }
     }
 
-    public static void updateGameName(String gameName, String newGameName, List<Game> list) {
-
-        for (Game game : list) {
+    public static void updateGameName(String gameName, String newGameName, List<Game> games) throws IOException {
+        for (Game game : games) {
             if (game.getName().equals(gameName)) {
-                GameService.deleteGame(game.getName());
+                deleteGameFile(game.getName());
                 game.setName(newGameName);
-                GameService.instanceOfGameFile(game);
+                instanceOfGameFile(game);
+            }
+        }
+    }
+
+    public static void updateReleaseDate(String gameName, String newReleaseDate, List<Game> games) throws IOException {
+        for (Game game : games) {
+            if (game.getName().equals(gameName)) {
+                deleteGameFile(gameName);
+                game.setReleaseDate(LocalDate.parse(newReleaseDate, fmt));
+                instanceOfGameFile(game);
+            }
+        }
+    }
+
+    public static void updateStudio(String gameName, String newStudio, List<Game> games) throws IOException {
+        for (Game game : games) {
+            if (game.getName().equals(gameName)) {
+                deleteGameFile(gameName);
+                game.setStudio(newStudio);
+                instanceOfGameFile(game);
+            }
+        }
+    }
+
+    public static void updateGenre(String gameName, String newGenre, List<Game> games) throws IOException {
+        for (Game game : games) {
+            if (game.getName().equals(gameName)) {
+                deleteGameFile(gameName);
+                game.setGenre(newGenre);
+                instanceOfGameFile(game);
+            }
+        }
+    }
+
+    public static void updateSynopsis(String gameName, List<Game> games) throws IOException {
+        for (Game game : games) {
+            if (game.getName().equals(gameName)) {
+                deleteGameFile(gameName);
+
+                StringBuilder synopsis = new StringBuilder();
+
+                System.out.println("New Synopsis (Skip a line and type 'END' to finish): ");
+                while (true) {
+                    String line = sc.nextLine();
+                    if (line.equalsIgnoreCase("END")) {
+                        break;
+                    }
+                    synopsis.append(line).append("\n");
+                }
+
+                game.setSynopsis(synopsis.toString());
+                instanceOfGameFile(game);
             }
         }
     }
