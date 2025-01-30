@@ -1,4 +1,4 @@
-package main.java.entities;
+package gamelibrary;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -21,6 +21,8 @@ public class Game {
         this.genre = genre;
         this.synopsis = synopsis;
     }
+
+    public Game() {}
 
     public String getName() {
         return name;
