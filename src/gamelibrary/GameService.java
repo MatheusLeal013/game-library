@@ -29,7 +29,7 @@ public class GameService {
     }
 
     public static void readGame(String gameName) {
-        String path = "file-library/" + gameName + ".txt";  
+        String path = "file-library/" + gameName + ".txt";
         processReadGame(path);
     }
 
@@ -57,7 +57,6 @@ public class GameService {
         for (Game game : games) {
             if (game.getName().equals(gameName)) {
                 deleteGameFile(gameName);
-                // Colocar validação da data aqui
                 game.setReleaseDate(LocalDate.parse(newReleaseDate, fmt));
                 instanceOfGameFile(game);
             }
@@ -84,23 +83,11 @@ public class GameService {
         }
     }
 
-    public static void updateSynopsis(String gameName, List<Game> games) {
+    public static void updateSynopsis(String gameName, StringBuilder newSynopsis, List<Game> games) {
         for (Game game : games) {
             if (game.getName().equals(gameName)) {
                 deleteGameFile(gameName);
-
-                StringBuilder synopsis = new StringBuilder();
-
-                System.out.println("New Synopsis (Skip a line and type 'END' to finish): ");
-                while (true) {
-                    String line = sc.nextLine();
-                    if (line.equalsIgnoreCase("END")) {
-                        break;
-                    }
-                    synopsis.append(line).append("\n");
-                }
-
-                game.setSynopsis(synopsis.toString());
+                game.setSynopsis(newSynopsis.toString());
                 instanceOfGameFile(game);
             }
         }
@@ -241,7 +228,7 @@ public class GameService {
         }
     }
 
-    private static boolean dateIsValid(String date) {
+    public static boolean dateIsValid(String date) {
         try {
             LocalDate.parse(date, fmt);
         }
