@@ -29,8 +29,7 @@ public class GameService {
     }
 
     public static void readGame(String gameName) {
-        String path = "file-library/" + gameName + ".txt";
-
+        String path = "file-library/" + gameName + ".txt";  
         processReadGame(path);
     }
 
@@ -54,10 +53,11 @@ public class GameService {
         }
     }
 
-    public static void updateReleaseDate(String gameName, String newReleaseDate, List<Game> games) throws IOException {
+    public static void updateReleaseDate(String gameName, String newReleaseDate, List<Game> games) {
         for (Game game : games) {
             if (game.getName().equals(gameName)) {
                 deleteGameFile(gameName);
+                // Colocar validação da data aqui
                 game.setReleaseDate(LocalDate.parse(newReleaseDate, fmt));
                 instanceOfGameFile(game);
             }
