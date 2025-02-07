@@ -1,8 +1,8 @@
-Game Name: Persona 5
+Game Name: Persona 4
 Release Date: 09/15/2016
 Studio: P-Studio
 Genre: Role-Playing
-Synopsis:
+Synopsis: 
 Persona 5 follows a high school student falsely accused of assault and sent to Tokyo for probation.
 There, he discovers the Metaverse, a parallel world formed by humanity's collective unconscious.
 Awakening his Persona, he leads the Phantom Thieves of Hearts, a group of students who reform

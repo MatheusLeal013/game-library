@@ -23,13 +23,13 @@ public class GameService {
     }
 
     public static void createGame(List<Game> games) {
-        Game game = instaceOfGame();
+        Game game = instanceGame(games);
         games.add(game);
         instanceOfGameFile(game);
     }
 
-    public static void readGame(String gameName) {
-        String path = "file-library/" + gameName + ".txt";
+    public static void searchGame(String gameNameSearched) {
+        String path = "file-library/" + gameNameSearched + ".txt";
         processReadGame(path);
     }
 
@@ -117,9 +117,14 @@ public class GameService {
         }
     }
 
-    private static Game instaceOfGame() {
+    private static Game instanceGame(List<Game> games) {
         System.out.print("Name: ");
         String name = sc.nextLine();
+        while (gameIsInTheLibrary(name, games)) {
+            System.out.println("There is already a game with this name in the library.");
+            System.out.print("Enter another name for the game: ");
+            name = sc.nextLine();
+        }
         System.out.print("Release Date: ");
         String releaseDate = sc.next();
         while (!dateIsValid(releaseDate)) {
@@ -237,4 +242,14 @@ public class GameService {
         }
         return true;
     }
+
+    public static boolean gameIsInTheLibrary(String gameName, List<Game> games) {
+        for (Game game : games) {
+            if (game.getName().equals(gameName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

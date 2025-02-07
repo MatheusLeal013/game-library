@@ -6,10 +6,14 @@ import gamelibrary.GameService;
 import java.util.List;
 import java.util.Scanner;
 
-
 public class UI {
 
     private final static Scanner sc = new Scanner(System.in);
+
+    public static void clearScreen() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+    }
 
     public static void mainMenu(List<Game> games) {
         System.out.println("Welcome to the Game Library! Here you can explore an internal library of games " +
@@ -38,14 +42,30 @@ public class UI {
                 break;
             case 3:
                 System.out.print("Enter the name of the game you want to update: ");
-                String gameName = sc.nextLine();
-                gameUpdateMenu(gameName, games);
+                String updatedGameName = sc.nextLine();
+                while (!GameService.gameIsInTheLibrary(updatedGameName, games)) {
+                    System.out.println("The game was not found in the library.");
+                    System.out.print("Retype the game name: ");
+                    updatedGameName = sc.nextLine();
+                }
+                gameUpdateMenu(updatedGameName, games);
                 break;
+            case 4:
+                System.out.print("Enter the name of the game you want to search for: ");
+                String gameNameSearched = sc.nextLine();
+                GameService.searchGame(gameNameSearched);
+            case 5:
+                System.out.print("Enter the name of the game you want to delete: ");
+                String gameNameDeleted = sc.nextLine();
+                GameService.deleteGameList(gameNameDeleted, games);
+            case 6:
+                System.exit(0);
             default:
         }
     }
 
     public static void gameUpdateMenu(String gameName, List<Game> games) {
+        clearScreen();
         System.out.println("1 - Update game name");
         System.out.println("2 - Update game release date");
         System.out.println("3 - Update game studio");
@@ -61,7 +81,11 @@ public class UI {
             case 1:
                 System.out.print("Enter the new game name: ");
                 String newGameName = sc.nextLine();
-                sc.nextLine();
+                while (GameService.gameIsInTheLibrary(newGameName, games)) {
+                    System.out.println("There is already a game with this name in the library.");
+                    System.out.print("Enter another name for the game: ");
+                    newGameName = sc.nextLine();
+                }
                 GameService.updateGameName(gameName, newGameName, games);
                 break;
             case 2:
