@@ -25,7 +25,7 @@ public class GameService {
     public static void createGame(List<Game> games) {
         Game game = instanceGame(games);
         games.add(game);
-        instanceOfGameFile(game);
+        instanceGameFile(game);
     }
 
     public static void searchGame(String gameNameSearched) {
@@ -48,7 +48,7 @@ public class GameService {
             if (game.getName().equals(gameName)) {
                 deleteGameFile(game.getName());
                 game.setName(newGameName);
-                instanceOfGameFile(game);
+                instanceGameFile(game);
             }
         }
     }
@@ -58,7 +58,7 @@ public class GameService {
             if (game.getName().equals(gameName)) {
                 deleteGameFile(gameName);
                 game.setReleaseDate(LocalDate.parse(newReleaseDate, fmt));
-                instanceOfGameFile(game);
+                instanceGameFile(game);
             }
         }
     }
@@ -68,7 +68,7 @@ public class GameService {
             if (game.getName().equals(gameName)) {
                 deleteGameFile(gameName);
                 game.setStudio(newStudio);
-                instanceOfGameFile(game);
+                instanceGameFile(game);
             }
         }
     }
@@ -78,7 +78,7 @@ public class GameService {
             if (game.getName().equals(gameName)) {
                 deleteGameFile(gameName);
                 game.setGenre(newGenre);
-                instanceOfGameFile(game);
+                instanceGameFile(game);
             }
         }
     }
@@ -88,12 +88,12 @@ public class GameService {
             if (game.getName().equals(gameName)) {
                 deleteGameFile(gameName);
                 game.setSynopsis(newSynopsis.toString());
-                instanceOfGameFile(game);
+                instanceGameFile(game);
             }
         }
     }
 
-    private static void instanceOfGameFile(Game game) {
+    private static void instanceGameFile(Game game) {
         String path = "file-library/" + game.getName() + ".txt";
 
         try (BufferedWriter bf = new BufferedWriter(new FileWriter(path))) {
@@ -236,8 +236,7 @@ public class GameService {
     public static boolean dateIsValid(String date) {
         try {
             LocalDate.parse(date, fmt);
-        }
-        catch (DateTimeException e) {
+        } catch (DateTimeException e) {
             return false;
         }
         return true;

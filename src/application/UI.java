@@ -3,6 +3,7 @@ package application;
 import gamelibrary.Game;
 import gamelibrary.GameService;
 
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -26,8 +27,12 @@ public class UI {
         System.out.println("5 - Delete game from library");
         System.out.println("6 - Close library");
 
-        System.out.print("Choose a number to perform any of the operations above: ");
-        int option = sc.nextInt();
+        // Tenho que resolver essa parada
+        int option = catchOption();
+
+        while (option == 0) {
+            option = catchOption();
+        }
 
         sc.nextLine();
 
@@ -53,14 +58,22 @@ public class UI {
             case 4:
                 System.out.print("Enter the name of the game you want to search for: ");
                 String gameNameSearched = sc.nextLine();
+                while (!GameService.gameIsInTheLibrary(gameNameSearched, games)) {
+                    System.out.println("The game was not found.");
+                    System.out.print("Enter the name of the game you want to search again: ");
+                    gameNameSearched = sc.nextLine();
+                }
                 GameService.searchGame(gameNameSearched);
+                break;
             case 5:
                 System.out.print("Enter the name of the game you want to delete: ");
                 String gameNameDeleted = sc.nextLine();
                 GameService.deleteGameList(gameNameDeleted, games);
+                break;
             case 6:
                 System.exit(0);
             default:
+                System.out.println("The option you entered is invalid!");
         }
     }
 
@@ -120,5 +133,19 @@ public class UI {
                 GameService.updateSynopsis(gameName, newSynopsis, games);
             default:
         }
+    }
+
+
+    // Resolver essa parada
+    public static int catchOption() {
+        int option = 0;
+        try {
+            System.out.print("Choose a number to perform any of the operations above: ");
+            option = sc.nextInt();
+        }
+        catch (InputMismatchException e) {
+            System.out.println("Invalid Option");
+        }
+        return option;
     }
 }

@@ -1,0 +1,22 @@
+Game Name: Super Mario World
+Release Date: 11/21/1990
+Studio: Nintendo
+Genre: Plataform
+Synopsis: 
+Super Mario World is a classic 2D platformer released by Nintendo in 1990
+for the Super Nintendo Entertainment System (SNES). The game follows Mario
+and Luigi as they embark on a quest to rescue Princess Peach from Bowser,
+who has kidnapped her and taken her to his castle in Dinosaur Land.
+
+As the brothers explore Dinosaur Land, they traverse multiple worlds filled
+with treacherous obstacles, enemies, and hidden secrets. Along the way, they
+encounter Yoshi, a friendly dinosaur who aids them by eating enemies and gaining
+special abilities depending on the color of the shells he consumes.
+
+The game introduces new mechanics, such as the Cape Feather, which allows Mario
+to fly, and an expansive overworld map with branching paths and hidden exits.
+Players must navigate through various themed areas, including forests, caves,
+and ghost houses, ultimately facing off against Bowser in his castle to save Princess Peach.
+
+With its refined platforming gameplay, secrets, and charming design, Super Mario
+World remains one of the most beloved and influential games in the Mario franchise.
