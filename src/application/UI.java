@@ -77,6 +77,10 @@ public class UI {
         }
     }
 
+    public static void gameCreateMenu() {
+
+    }
+
     public static void gameUpdateMenu(String gameName, List<Game> games) {
         clearScreen();
         System.out.println("1 - Update game name");

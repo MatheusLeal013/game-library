@@ -93,6 +93,7 @@ public class GameService {
         }
     }
 
+    // Colocar isso como criação do jogo
     private static void instanceGameFile(Game game) {
         String path = "file-library/" + game.getName() + ".txt";
 
@@ -117,6 +118,7 @@ public class GameService {
         }
     }
 
+    // Colocar isso no UI
     private static Game instanceGame(List<Game> games) {
         System.out.print("Name: ");
         String name = sc.nextLine();
