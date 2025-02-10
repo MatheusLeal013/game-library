@@ -8,13 +8,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.stream.Stream;
 
 public class GameService {
 
     private final static DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-    private final static Scanner sc = new Scanner(System.in);
 
     public static List<Game> init() {
         List<Game> games = new ArrayList<>();
@@ -22,12 +20,32 @@ public class GameService {
         return games;
     }
 
-    public static void createGame(List<Game> games) {
-        Game game = instanceGame(games);
-        games.add(game);
-        instanceGameFile(game);
+    public static void createGame(Game newGame, List<Game> gamesList) {
+        String path = "file-library/" + newGame.getName() + ".txt";
+
+        try (BufferedWriter bf = new BufferedWriter(new FileWriter(path))) {
+            bf.write("Game Name: " + newGame.getName());
+            bf.newLine();
+            bf.write("Release Date: " + newGame.getReleaseDate().format(fmt));
+            bf.newLine();
+            bf.write("Studio: " + newGame.getStudio());
+            bf.newLine();
+            bf.write("Genre: " + newGame.getGenre());
+            bf.newLine();
+            bf.write("Synopsis: ");
+            bf.newLine();
+            bf.write(   newGame.getSynopsis());
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        catch (DateTimeException e) {
+            throw new DateTimeException(e.getMessage());
+        }
+        gamesList.add(newGame);
     }
 
+    // Verificar se jogo existe na biblioteca e uppercase
     public static void searchGame(String gameNameSearched) {
         String path = "file-library/" + gameNameSearched + ".txt";
         processReadGame(path);
@@ -48,7 +66,7 @@ public class GameService {
             if (game.getName().equals(gameName)) {
                 deleteGameFile(game.getName());
                 game.setName(newGameName);
-                instanceGameFile(game);
+                createGame(game, games);
             }
         }
     }
@@ -58,7 +76,7 @@ public class GameService {
             if (game.getName().equals(gameName)) {
                 deleteGameFile(gameName);
                 game.setReleaseDate(LocalDate.parse(newReleaseDate, fmt));
-                instanceGameFile(game);
+                createGame(game, games);
             }
         }
     }
@@ -68,7 +86,7 @@ public class GameService {
             if (game.getName().equals(gameName)) {
                 deleteGameFile(gameName);
                 game.setStudio(newStudio);
-                instanceGameFile(game);
+                createGame(game, games);
             }
         }
     }
@@ -78,7 +96,7 @@ public class GameService {
             if (game.getName().equals(gameName)) {
                 deleteGameFile(gameName);
                 game.setGenre(newGenre);
-                instanceGameFile(game);
+                createGame(game, games);
             }
         }
     }
@@ -88,71 +106,9 @@ public class GameService {
             if (game.getName().equals(gameName)) {
                 deleteGameFile(gameName);
                 game.setSynopsis(newSynopsis.toString());
-                instanceGameFile(game);
+                createGame(game, games);
             }
         }
-    }
-
-    // Colocar isso como criação do jogo
-    private static void instanceGameFile(Game game) {
-        String path = "file-library/" + game.getName() + ".txt";
-
-        try (BufferedWriter bf = new BufferedWriter(new FileWriter(path))) {
-            bf.write("Game Name: " + game.getName());
-            bf.newLine();
-            bf.write("Release Date: " + game.getReleaseDate().format(fmt));
-            bf.newLine();
-            bf.write("Studio: " + game.getStudio());
-            bf.newLine();
-            bf.write("Genre: " + game.getGenre());
-            bf.newLine();
-            bf.write("Synopsis: ");
-            bf.newLine();
-            bf.write(   game.getSynopsis());
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-        catch (DateTimeException e) {
-            throw new DateTimeException(e.getMessage());
-        }
-    }
-
-    // Colocar isso no UI
-    private static Game instanceGame(List<Game> games) {
-        System.out.print("Name: ");
-        String name = sc.nextLine();
-        while (gameIsInTheLibrary(name, games)) {
-            System.out.println("There is already a game with this name in the library.");
-            System.out.print("Enter another name for the game: ");
-            name = sc.nextLine();
-        }
-        System.out.print("Release Date: ");
-        String releaseDate = sc.next();
-        while (!dateIsValid(releaseDate)) {
-            System.out.println("Invalid date.");
-            System.out.print("Release Date: ");
-            releaseDate = sc.next();
-        }
-
-        sc.nextLine();
-        System.out.print("Studio: ");
-        String studio = sc.nextLine();
-        System.out.print("Genre: ");
-        String genre = sc.nextLine();
-
-        StringBuilder synopsis = new StringBuilder();
-        System.out.println("Synopsis (Skip a line and type 'END' to finish): ");
-        while (true) {
-            String line = sc.nextLine();
-            if (line.equalsIgnoreCase("END")) {
-                break;
-            }
-            synopsis.append(line).append("\n");
-        }
-
-        return new Game(name, LocalDate.parse(releaseDate, fmt), studio, genre, synopsis.toString());
-
     }
 
     private static void deleteGameFile(String gameName) {

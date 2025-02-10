@@ -3,6 +3,8 @@ package application;
 import gamelibrary.Game;
 import gamelibrary.GameService;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -10,6 +12,7 @@ import java.util.Scanner;
 public class UI {
 
     private final static Scanner sc = new Scanner(System.in);
+    private final static DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
     public static void clearScreen() {
         System.out.print("\033[H\033[2J");
@@ -27,19 +30,19 @@ public class UI {
         System.out.println("5 - Delete game from library");
         System.out.println("6 - Close library");
 
-        // Tenho que resolver essa parada
-        int option = catchOption();
-
-        while (option == 0) {
+        // Tenho que resolver isso - Talvez coloque essa lógica no Main
+        int option;
+        do {
             option = catchOption();
         }
+        while (option < 0 && option > 6);
 
         sc.nextLine();
 
         switch (option) {
             case 1:
                 System.out.println("Enter the information of the new game:");
-                GameService.createGame(games);
+                newGameMenu(games);
                 break;
             case 2:
                 System.out.println("All games from library: ");
@@ -77,8 +80,40 @@ public class UI {
         }
     }
 
-    public static void gameCreateMenu() {
+    public static void newGameMenu(List<Game> games) {
+        System.out.print("Name: ");
+        String name = sc.nextLine();
+        while (GameService.gameIsInTheLibrary(name, games)) {
+            System.out.println("There is already a game with this name in the library.");
+            System.out.print("Enter another name for the game: ");
+            name = sc.nextLine();
+        }
+        System.out.print("Release Date: ");
+        String releaseDate = sc.next();
+        while (!GameService.dateIsValid(releaseDate)) {
+            System.out.println("Invalid date.");
+            System.out.print("Release Date: ");
+            releaseDate = sc.next();
+        }
 
+        sc.nextLine();
+        System.out.print("Studio: ");
+        String studio = sc.nextLine();
+        System.out.print("Genre: ");
+        String genre = sc.nextLine();
+
+        StringBuilder synopsis = new StringBuilder();
+        System.out.println("Synopsis (Skip a line and type 'END' to finish): ");
+        while (true) {
+            String line = sc.nextLine();
+            if (line.equalsIgnoreCase("END")) {
+                break;
+            }
+            synopsis.append(line).append("\n");
+        }
+
+        Game newGame = new Game(name, LocalDate.parse(releaseDate, fmt), studio, genre, synopsis.toString());
+        GameService.createGame(newGame, games);
     }
 
     public static void gameUpdateMenu(String gameName, List<Game> games) {
@@ -138,7 +173,6 @@ public class UI {
             default:
         }
     }
-
 
     // Resolver essa parada
     public static int catchOption() {

@@ -1,0 +1,15 @@
+Game Name: Elden Ring
+Release Date: 02/25/2022
+Studio: From Software
+Genre: Souls-like
+Synopsis: 
+Elden Ring is an action RPG developed by FromSoftware and published by Bandai Namco. The game
+takes place in the Lands Between, a vast open world ruled by demigods who each possess a fragment
+of the powerful Elden Ring. These fragments, known as Great Runes, have corrupted their wielders,
+leading to a war known as the Shattering and the collapse of the Golden Order.
+
+The player takes on the role of a Tarnished, an exile summoned back to the Lands Between with the
+goal of reassembling the Elden Ring and becoming the next Elden Lord. To achieve this, the Tarnished
+must traverse a dangerous world filled with formidable enemies, powerful bosses, and deep lore
+hidden in its ruins. Along the journey, they encounter allies and foes, each with their own motivations,
+as they uncover the true nature of the Elden Ring and the gods that govern the realm.
