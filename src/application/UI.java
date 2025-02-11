@@ -35,7 +35,7 @@ public class UI {
         do {
             option = catchOption();
         }
-        while (option < 0 && option > 6);
+        while (option <= 0 || option > 6);
 
         sc.nextLine();
 
@@ -123,6 +123,7 @@ public class UI {
         System.out.println("3 - Update game studio");
         System.out.println("4 - Update game genre");
         System.out.println("5 - Update game synopsis");
+        System.out.println("6 - Return to main menu");
         System.out.print("Choose the number above what you want to change in the game: ");
         int option = sc.nextInt();
 
@@ -154,11 +155,12 @@ public class UI {
                 System.out.print("Enter the new game studio: ");
                 String newStudio = sc.nextLine();
                 GameService.updateStudio(gameName, newStudio, games);
+                break;
             case 4:
                 System.out.print("Enter the new game genre: ");
                 String newGenre = sc.nextLine();
-                sc.nextLine();
                 GameService.updateGenre(gameName, newGenre, games);
+                break;
             case 5:
                 System.out.println("Enter the new game synopsis:");
                 StringBuilder newSynopsis = new StringBuilder();
@@ -170,6 +172,9 @@ public class UI {
                     newSynopsis.append(line).append("\n");
                 }
                 GameService.updateSynopsis(gameName, newSynopsis, games);
+                break;
+            case 6:
+                return;
             default:
         }
     }

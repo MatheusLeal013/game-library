@@ -113,7 +113,7 @@ public class GameService {
     private static void deleteGameFile(String gameName) {
         try {
             Stream<Path> stream = Files.list(Path.of("file-library/"));
-            stream.forEach(p -> processDeletFile(p, gameName));
+            stream.forEach(p -> processDeleteFile(p, gameName));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -141,7 +141,7 @@ public class GameService {
         }
     }
 
-    private static void processDeletFile(Path p, String gameName) {
+    private static void processDeleteFile(Path p, String gameName) {
         if (p.getFileName().toString().contains(gameName)) {
             p.toFile().delete();
         }
@@ -201,7 +201,7 @@ public class GameService {
 
     public static boolean gameIsInTheLibrary(String gameName, List<Game> games) {
         for (Game game : games) {
-            if (game.getName().equals(gameName)) {
+            if (game.getName().equalsIgnoreCase(gameName)) {
                 return true;
             }
         }
