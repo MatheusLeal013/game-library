@@ -45,8 +45,7 @@ public class GameService {
         gamesList.add(newGame);
     }
 
-    // Verificar se jogo existe na biblioteca e uppercase
-    public static void searchGame(String gameNameSearched) {
+    public static void showGame(String gameNameSearched) {
         String path = "file-library/" + gameNameSearched + ".txt";
         processReadGame(path);
     }
@@ -62,52 +61,52 @@ public class GameService {
     }
 
     public static void updateGameName(String gameName, String newGameName, List<Game> games) {
-        for (Game game : games) {
-            if (game.getName().equals(gameName)) {
-                deleteGameFile(game.getName());
-                game.setName(newGameName);
-                createGame(game, games);
-            }
+        Game outdatedGame = serchGame(gameName, games);
+        if (outdatedGame != null) {
+            deleteGameFile(outdatedGame.getName());
+            Game newGame = new Game(newGameName, outdatedGame.getReleaseDate(), outdatedGame.getStudio(), outdatedGame.getGenre(), outdatedGame.getSynopsis());
+            createGame(newGame, games);
+            games.remove(outdatedGame);
         }
     }
 
     public static void updateReleaseDate(String gameName, String newReleaseDate, List<Game> games) {
-        for (Game game : games) {
-            if (game.getName().equals(gameName)) {
-                deleteGameFile(gameName);
-                game.setReleaseDate(LocalDate.parse(newReleaseDate, fmt));
-                createGame(game, games);
-            }
+        Game outdatedGame = serchGame(gameName, games);
+        if (outdatedGame != null) {
+            deleteGameFile(outdatedGame.getName());
+            Game newGame = new Game(outdatedGame.getName(), LocalDate.parse(newReleaseDate, fmt), outdatedGame.getStudio(), outdatedGame.getGenre(), outdatedGame.getSynopsis());
+            createGame(newGame, games);
+            games.remove(outdatedGame);
         }
     }
 
     public static void updateStudio(String gameName, String newStudio, List<Game> games) {
-        for (Game game : games) {
-            if (game.getName().equals(gameName)) {
-                deleteGameFile(gameName);
-                game.setStudio(newStudio);
-                createGame(game, games);
-            }
+        Game outdatedGame = serchGame(gameName, games);
+        if (outdatedGame != null) {
+            deleteGameFile(outdatedGame.getName());
+            Game newGame = new Game(outdatedGame.getName(), outdatedGame.getReleaseDate(), newStudio, outdatedGame.getGenre(), outdatedGame.getSynopsis());
+            createGame(newGame, games);
+            games.remove(outdatedGame);
         }
     }
 
     public static void updateGenre(String gameName, String newGenre, List<Game> games) {
-        for (Game game : games) {
-            if (game.getName().equals(gameName)) {
-                deleteGameFile(gameName);
-                game.setGenre(newGenre);
-                createGame(game, games);
-            }
+        Game outdatedGame = serchGame(gameName, games);
+        if (outdatedGame != null) {
+            deleteGameFile(outdatedGame.getName());
+            Game newGame = new Game(outdatedGame.getName(), outdatedGame.getReleaseDate(), outdatedGame.getStudio(), newGenre, outdatedGame.getSynopsis());
+            createGame(newGame, games);
+            games.remove(outdatedGame);
         }
     }
 
     public static void updateSynopsis(String gameName, StringBuilder newSynopsis, List<Game> games) {
-        for (Game game : games) {
-            if (game.getName().equals(gameName)) {
-                deleteGameFile(gameName);
-                game.setSynopsis(newSynopsis.toString());
-                createGame(game, games);
-            }
+        Game outdatedGame = serchGame(gameName, games);
+        if (outdatedGame != null) {
+            deleteGameFile(outdatedGame.getName());
+            Game newGame = new Game(outdatedGame.getName(), outdatedGame.getReleaseDate(), outdatedGame.getStudio(), outdatedGame.getGenre(), newSynopsis.toString());
+            createGame(newGame, games);
+            games.remove(outdatedGame);
         }
     }
 
@@ -209,4 +208,12 @@ public class GameService {
         return false;
     }
 
+    public static Game serchGame(String gameName, List<Game> games) {
+        for (Game game : games) {
+            if (game.getName().equals(gameName)) {
+                return new Game(game.getName(), game.getReleaseDate(), game.getStudio(), game.getGenre(), game.getSynopsis());
+            }
+        }
+        return null;
+    }
 }

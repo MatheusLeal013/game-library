@@ -66,7 +66,7 @@ public class UI {
                     System.out.print("Enter the name of the game you want to search again: ");
                     gameNameSearched = sc.nextLine();
                 }
-                GameService.searchGame(gameNameSearched);
+                GameService.showGame(gameNameSearched);
                 break;
             case 5:
                 System.out.print("Enter the name of the game you want to delete: ");
