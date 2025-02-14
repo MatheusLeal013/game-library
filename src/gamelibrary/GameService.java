@@ -21,27 +21,7 @@ public class GameService {
     }
 
     public static void createGame(Game newGame, List<Game> gamesList) {
-        String path = "file-library/" + newGame.getName() + ".txt";
-
-        try (BufferedWriter bf = new BufferedWriter(new FileWriter(path))) {
-            bf.write("Game Name: " + newGame.getName());
-            bf.newLine();
-            bf.write("Release Date: " + newGame.getReleaseDate().format(fmt));
-            bf.newLine();
-            bf.write("Studio: " + newGame.getStudio());
-            bf.newLine();
-            bf.write("Genre: " + newGame.getGenre());
-            bf.newLine();
-            bf.write("Synopsis: ");
-            bf.newLine();
-            bf.write(   newGame.getSynopsis());
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-        catch (DateTimeException e) {
-            throw new DateTimeException(e.getMessage());
-        }
+       createGameFile(newGame);
         gamesList.add(newGame);
     }
 
@@ -51,12 +31,10 @@ public class GameService {
     }
 
     public static void deleteGameList(String gameName, List<Game> games) {
-        for (Game game : games) {
-            if (game.getName().equals(gameName)) {
-                deleteGameFile(gameName);
-                games.remove(game);
-                break;
-            }
+        Game gameDeleted = serchGame(gameName, games);
+        if (gameDeleted != null) {
+            deleteGameFile(gameName);
+            games.remove(gameDeleted);
         }
     }
 
@@ -64,9 +42,8 @@ public class GameService {
         Game outdatedGame = serchGame(gameName, games);
         if (outdatedGame != null) {
             deleteGameFile(outdatedGame.getName());
-            Game newGame = new Game(newGameName, outdatedGame.getReleaseDate(), outdatedGame.getStudio(), outdatedGame.getGenre(), outdatedGame.getSynopsis());
-            createGame(newGame, games);
-            games.remove(outdatedGame);
+            outdatedGame.setName(newGameName);
+            createGameFile(outdatedGame);
         }
     }
 
@@ -74,9 +51,8 @@ public class GameService {
         Game outdatedGame = serchGame(gameName, games);
         if (outdatedGame != null) {
             deleteGameFile(outdatedGame.getName());
-            Game newGame = new Game(outdatedGame.getName(), LocalDate.parse(newReleaseDate, fmt), outdatedGame.getStudio(), outdatedGame.getGenre(), outdatedGame.getSynopsis());
-            createGame(newGame, games);
-            games.remove(outdatedGame);
+            outdatedGame.setReleaseDate(LocalDate.parse(newReleaseDate, fmt));
+            createGameFile(outdatedGame);
         }
     }
 
@@ -84,9 +60,8 @@ public class GameService {
         Game outdatedGame = serchGame(gameName, games);
         if (outdatedGame != null) {
             deleteGameFile(outdatedGame.getName());
-            Game newGame = new Game(outdatedGame.getName(), outdatedGame.getReleaseDate(), newStudio, outdatedGame.getGenre(), outdatedGame.getSynopsis());
-            createGame(newGame, games);
-            games.remove(outdatedGame);
+            outdatedGame.setStudio(newStudio);
+            createGameFile(outdatedGame);
         }
     }
 
@@ -94,9 +69,8 @@ public class GameService {
         Game outdatedGame = serchGame(gameName, games);
         if (outdatedGame != null) {
             deleteGameFile(outdatedGame.getName());
-            Game newGame = new Game(outdatedGame.getName(), outdatedGame.getReleaseDate(), outdatedGame.getStudio(), newGenre, outdatedGame.getSynopsis());
-            createGame(newGame, games);
-            games.remove(outdatedGame);
+            outdatedGame.setGenre(newGenre);
+            createGameFile(outdatedGame);
         }
     }
 
@@ -104,9 +78,8 @@ public class GameService {
         Game outdatedGame = serchGame(gameName, games);
         if (outdatedGame != null) {
             deleteGameFile(outdatedGame.getName());
-            Game newGame = new Game(outdatedGame.getName(), outdatedGame.getReleaseDate(), outdatedGame.getStudio(), outdatedGame.getGenre(), newSynopsis.toString());
-            createGame(newGame, games);
-            games.remove(outdatedGame);
+            outdatedGame.setSynopsis(newSynopsis.toString());
+            createGameFile(outdatedGame);
         }
     }
 
@@ -122,7 +95,7 @@ public class GameService {
     private static void processInitGameFile(List<Game> games) {
         try {
             Stream<Path> stream = Files.list(Path.of("file-library/"));
-            stream.forEach(p -> processFile(p, games));
+            stream.forEach(p -> processGameFile(p, games));
         }
         catch (IOException | SecurityException e) {
             System.out.println(e.getMessage());
@@ -147,7 +120,30 @@ public class GameService {
         }
     }
 
-    private static void processFile(Path p, List<Game> games) {
+    private static void createGameFile(Game game) {
+        String path = "file-library/" + game.getName() + ".txt";
+        try (BufferedWriter bf = new BufferedWriter(new FileWriter(path))) {
+            bf.write("Game Name: " + game.getName());
+            bf.newLine();
+            bf.write("Release Date: " + game.getReleaseDate().format(fmt));
+            bf.newLine();
+            bf.write("Studio: " + game.getStudio());
+            bf.newLine();
+            bf.write("Genre: " + game.getGenre());
+            bf.newLine();
+            bf.write("Synopsis: ");
+            bf.newLine();
+            bf.write(   game.getSynopsis());
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        catch (DateTimeException e) {
+            throw new DateTimeException(e.getMessage());
+        }
+    }
+
+    private static void processGameFile(Path p, List<Game> games) {
         try (BufferedReader bf = new BufferedReader(new FileReader(p.toFile()))) {
             String line = bf.readLine();
             String gameName = "";
@@ -211,7 +207,7 @@ public class GameService {
     public static Game serchGame(String gameName, List<Game> games) {
         for (Game game : games) {
             if (game.getName().equals(gameName)) {
-                return new Game(game.getName(), game.getReleaseDate(), game.getStudio(), game.getGenre(), game.getSynopsis());
+                return game;
             }
         }
         return null;

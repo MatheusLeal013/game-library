@@ -30,16 +30,16 @@ public class UI {
         System.out.println("5 - Delete game from library");
         System.out.println("6 - Close library");
 
-        // Tenho que resolver isso - Talvez coloque essa lógica no Main
-        int option;
+        int mainMenuOption;
         do {
-            option = catchOption();
+            System.out.print("Choose a number to perform any of the operations above: ");
+            mainMenuOption = catchOption();
         }
-        while (option <= 0 || option > 6);
+        while (mainMenuOption <= 0 || mainMenuOption > 6);
 
         sc.nextLine();
 
-        switch (option) {
+        switch (mainMenuOption) {
             case 1:
                 System.out.println("Enter the information of the new game:");
                 newGameMenu(games);
@@ -52,17 +52,18 @@ public class UI {
                 System.out.print("Enter the name of the game you want to update: ");
                 String updatedGameName = sc.nextLine();
                 while (!GameService.gameIsInTheLibrary(updatedGameName, games)) {
-                    System.out.println("The game was not found in the library.");
-                    System.out.print("Retype the game name: ");
+                    System.out.println("The game was not found in the library!");
+                    System.out.print("Enter the name of the game you want to update again: ");
                     updatedGameName = sc.nextLine();
                 }
                 gameUpdateMenu(updatedGameName, games);
+                System.out.println(updatedGameName + " has been updated.");
                 break;
             case 4:
                 System.out.print("Enter the name of the game you want to search for: ");
                 String gameNameSearched = sc.nextLine();
                 while (!GameService.gameIsInTheLibrary(gameNameSearched, games)) {
-                    System.out.println("The game was not found.");
+                    System.out.println("The game was not found in the library!");
                     System.out.print("Enter the name of the game you want to search again: ");
                     gameNameSearched = sc.nextLine();
                 }
@@ -71,16 +72,21 @@ public class UI {
             case 5:
                 System.out.print("Enter the name of the game you want to delete: ");
                 String gameNameDeleted = sc.nextLine();
+                if (!GameService.gameIsInTheLibrary(gameNameDeleted, games)) {
+                    System.out.println("The game was not found in the library!");
+                    System.out.print("Retype the name of the game you want to delete: ");
+                    gameNameDeleted = sc.nextLine();
+                }
                 GameService.deleteGameList(gameNameDeleted, games);
+                System.out.println(gameNameDeleted + " was deleted.");
                 break;
             case 6:
                 System.exit(0);
-            default:
-                System.out.println("The option you entered is invalid!");
         }
     }
 
     public static void newGameMenu(List<Game> games) {
+        clearScreen();
         System.out.print("Name: ");
         String name = sc.nextLine();
         while (GameService.gameIsInTheLibrary(name, games)) {
@@ -114,6 +120,8 @@ public class UI {
 
         Game newGame = new Game(name, LocalDate.parse(releaseDate, fmt), studio, genre, synopsis.toString());
         GameService.createGame(newGame, games);
+
+        System.out.println(name + " was created.");
     }
 
     public static void gameUpdateMenu(String gameName, List<Game> games) {
@@ -124,13 +132,17 @@ public class UI {
         System.out.println("4 - Update game genre");
         System.out.println("5 - Update game synopsis");
         System.out.println("6 - Return to main menu");
-        System.out.print("Choose the number above what you want to change in the game: ");
-        int option = sc.nextInt();
+
+        int updateMenuOption;
+        do {
+            System.out.print("Choose the number above what you want to change in the game: ");
+            updateMenuOption = catchOption();
+        }
+        while (updateMenuOption <= 0 || updateMenuOption > 6);
 
         sc.nextLine();
 
-        // Erros de entrada por aqui, resolver mais tarde
-        switch (option) {
+        switch (updateMenuOption) {
             case 1:
                 System.out.print("Enter the new game name: ");
                 String newGameName = sc.nextLine();
@@ -162,7 +174,7 @@ public class UI {
                 GameService.updateGenre(gameName, newGenre, games);
                 break;
             case 5:
-                System.out.println("Enter the new game synopsis:");
+                System.out.println("Enter the new game synopsis (Skip a line and type 'END' to finish)  :");
                 StringBuilder newSynopsis = new StringBuilder();
                 while (true) {
                     String line = sc.nextLine();
@@ -179,14 +191,13 @@ public class UI {
         }
     }
 
-    // Resolver essa parada
     public static int catchOption() {
         int option = 0;
         try {
-            System.out.print("Choose a number to perform any of the operations above: ");
             option = sc.nextInt();
         }
         catch (InputMismatchException e) {
+            sc.nextLine();
             System.out.println("Invalid Option");
         }
         return option;
