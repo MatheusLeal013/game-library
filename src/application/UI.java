@@ -30,12 +30,13 @@ public class UI {
         System.out.println("5 - Delete game from library");
         System.out.println("6 - Close library");
 
-        int mainMenuOption;
-        do {
-            System.out.print("Choose a number to perform any of the operations above: ");
+        System.out.print("Choose a number to perform any of the operations above: ");
+        int mainMenuOption = catchOption();
+        while (mainMenuOption <= 0 || mainMenuOption > 6) {
+            System.out.print("Invalid option! Choose another number to perform any of the operations above: ");
             mainMenuOption = catchOption();
         }
-        while (mainMenuOption <= 0 || mainMenuOption > 6);
+
 
         sc.nextLine();
 
@@ -60,14 +61,7 @@ public class UI {
                 System.out.println(updatedGameName + " has been updated.");
                 break;
             case 4:
-                System.out.print("Enter the name of the game you want to search for: ");
-                String gameNameSearched = sc.nextLine();
-                while (!GameService.gameIsInTheLibrary(gameNameSearched, games)) {
-                    System.out.println("The game was not found in the library!");
-                    System.out.print("Enter the name of the game you want to search again: ");
-                    gameNameSearched = sc.nextLine();
-                }
-                GameService.showGame(gameNameSearched);
+                gameSearchMenu(games);
                 break;
             case 5:
                 System.out.print("Enter the name of the game you want to delete: ");
@@ -133,12 +127,13 @@ public class UI {
         System.out.println("5 - Update game synopsis");
         System.out.println("6 - Return to main menu");
 
-        int updateMenuOption;
-        do {
-            System.out.print("Choose the number above what you want to change in the game: ");
+
+        System.out.print("Choose a number above what you want to change in the game: ");
+        int updateMenuOption = catchOption();
+        while (updateMenuOption <= 0 || updateMenuOption > 6) {
+            System.out.print("Invalid option! Choose another number above the one you want to change in the game: ");
             updateMenuOption = catchOption();
         }
-        while (updateMenuOption <= 0 || updateMenuOption > 6);
 
         sc.nextLine();
 
@@ -191,6 +186,61 @@ public class UI {
         }
     }
 
+    public static void gameSearchMenu(List<Game> games) {
+        clearScreen();
+        System.out.println("1 - Search games by name");
+        System.out.println("2 - Search games by release date");
+        System.out.println("3 - Search games by genre");
+        System.out.println("4 - Search games by studio");
+
+        System.out.print("Choose a number above to perform the type of search you want: ");
+        int searchMenuOption = catchOption();
+        while (searchMenuOption <= 0 || searchMenuOption > 4) {
+            System.out.print("Invalid option! Choose another number above to perform the type of search you want: ");
+            searchMenuOption = catchOption();
+        }
+
+        sc.nextLine();
+
+        switch (searchMenuOption) {
+            case 1:
+                System.out.print("Enter the name of the game you want to search for by name: ");
+                String gameNameSearched = sc.nextLine();
+                while (GameService.searchGameByName(gameNameSearched, games) == null) {
+                    System.out.print("The game you were looking for was not found, enter the name of another game: ");
+                    gameNameSearched = sc.nextLine();
+                }
+                System.out.println("Game found, game information below: ");
+                GameService.showGame(gameNameSearched);
+                break;
+            case 2:
+                System.out.print("Enter the release date to search for games with this date: ");
+                String searchedGamesreleaseDate = sc.next();
+                // Criar um metodo com essa funcionalidade de verificação
+                while (!GameService.dateIsValid(searchedGamesreleaseDate)) {
+                    System.out.println("Invalid date.");
+                    System.out.print("Release Date: ");
+                    searchedGamesreleaseDate = sc.next();
+                }
+                if (GameService.searchGameByReleaseDate(searchedGamesreleaseDate, games) == null) {
+                    System.out.println("The games were not found with the release date stated");
+                    break;
+                }
+                System.out.println("Games with this release date");
+                GameService.searchGameByReleaseDate(searchedGamesreleaseDate, games).forEach(game -> System.out.println(game.getName()));
+                break;
+            case 3:
+                System.out.print("Enter the name of the genre to search for games that match it: ");
+                String gameGenreSearched = sc.nextLine();
+                if (GameService.serchGameByGenre(gameGenreSearched, games) == null) {
+                    System.out.println("Games with the specified genre were not found");
+                    break;
+                }
+                System.out.println("Games of the genre " + gameGenreSearched + " below");
+                GameService.serchGameByGenre(gameGenreSearched, games).forEach(game -> System.out.println(game.getName()));
+        }
+    }
+
     public static int catchOption() {
         int option = 0;
         try {
@@ -198,7 +248,6 @@ public class UI {
         }
         catch (InputMismatchException e) {
             sc.nextLine();
-            System.out.println("Invalid Option");
         }
         return option;
     }

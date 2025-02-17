@@ -31,7 +31,7 @@ public class GameService {
     }
 
     public static void deleteGameList(String gameName, List<Game> games) {
-        Game gameDeleted = serchGame(gameName, games);
+        Game gameDeleted = searchGameByName(gameName, games);
         if (gameDeleted != null) {
             deleteGameFile(gameName);
             games.remove(gameDeleted);
@@ -39,7 +39,7 @@ public class GameService {
     }
 
     public static void updateGameName(String gameName, String newGameName, List<Game> games) {
-        Game outdatedGame = serchGame(gameName, games);
+        Game outdatedGame = searchGameByName(gameName, games);
         if (outdatedGame != null) {
             deleteGameFile(outdatedGame.getName());
             outdatedGame.setName(newGameName);
@@ -48,7 +48,7 @@ public class GameService {
     }
 
     public static void updateReleaseDate(String gameName, String newReleaseDate, List<Game> games) {
-        Game outdatedGame = serchGame(gameName, games);
+        Game outdatedGame = searchGameByName(gameName, games);
         if (outdatedGame != null) {
             deleteGameFile(outdatedGame.getName());
             outdatedGame.setReleaseDate(LocalDate.parse(newReleaseDate, fmt));
@@ -57,7 +57,7 @@ public class GameService {
     }
 
     public static void updateStudio(String gameName, String newStudio, List<Game> games) {
-        Game outdatedGame = serchGame(gameName, games);
+        Game outdatedGame = searchGameByName(gameName, games);
         if (outdatedGame != null) {
             deleteGameFile(outdatedGame.getName());
             outdatedGame.setStudio(newStudio);
@@ -66,7 +66,7 @@ public class GameService {
     }
 
     public static void updateGenre(String gameName, String newGenre, List<Game> games) {
-        Game outdatedGame = serchGame(gameName, games);
+        Game outdatedGame = searchGameByName(gameName, games);
         if (outdatedGame != null) {
             deleteGameFile(outdatedGame.getName());
             outdatedGame.setGenre(newGenre);
@@ -75,7 +75,7 @@ public class GameService {
     }
 
     public static void updateSynopsis(String gameName, StringBuilder newSynopsis, List<Game> games) {
-        Game outdatedGame = serchGame(gameName, games);
+        Game outdatedGame = searchGameByName(gameName, games);
         if (outdatedGame != null) {
             deleteGameFile(outdatedGame.getName());
             outdatedGame.setSynopsis(newSynopsis.toString());
@@ -204,7 +204,7 @@ public class GameService {
         return false;
     }
 
-    public static Game serchGame(String gameName, List<Game> games) {
+    public static Game searchGameByName(String gameName, List<Game> games) {
         for (Game game : games) {
             if (game.getName().equals(gameName)) {
                 return game;
@@ -212,4 +212,13 @@ public class GameService {
         }
         return null;
     }
+
+    public static List<Game> searchGameByReleaseDate(String releaseDate, List<Game> games) {
+        return games.stream().filter(game -> game.getReleaseDate().equals(LocalDate.parse(releaseDate, fmt))).toList();
+    }
+
+    public static List<Game> serchGameByGenre(String genre, List<Game> games) {
+        return games.stream().filter(game -> game.getGenre().equals(genre)).toList();
+    }
+
 }
