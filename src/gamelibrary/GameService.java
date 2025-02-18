@@ -186,15 +186,7 @@ public class GameService {
         }
     }
 
-    public static boolean dateIsValid(String date) {
-        try {
-            LocalDate.parse(date, fmt);
-        } catch (DateTimeException e) {
-            return false;
-        }
-        return true;
-    }
-
+    // Esse metodo é útil aqui?
     public static boolean gameIsInTheLibrary(String gameName, List<Game> games) {
         for (Game game : games) {
             if (game.getName().equalsIgnoreCase(gameName)) {
@@ -204,21 +196,34 @@ public class GameService {
         return false;
     }
 
-    public static Game searchGameByName(String gameName, List<Game> games) {
+    public static Game searchGameByName(String gameNameSearched, List<Game> games) {
         for (Game game : games) {
-            if (game.getName().equals(gameName)) {
+            if (game.getName().equals(gameNameSearched)) {
                 return game;
             }
         }
         return null;
     }
 
-    public static List<Game> searchGameByReleaseDate(String releaseDate, List<Game> games) {
-        return games.stream().filter(game -> game.getReleaseDate().equals(LocalDate.parse(releaseDate, fmt))).toList();
+    public static boolean dateIsValid(String date) {
+        try {
+            LocalDate.parse(date, fmt);
+        } catch (DateTimeException e) {
+            return false;
+        }
+        return true;
     }
 
-    public static List<Game> serchGameByGenre(String genre, List<Game> games) {
-        return games.stream().filter(game -> game.getGenre().equals(genre)).toList();
+    public static List<Game> searchGameByReleaseDate(String searchedGamesreleaseDate, List<Game> games) {
+        return games.stream().filter(game -> game.getReleaseDate().equals(LocalDate.parse(searchedGamesreleaseDate, fmt))).toList();
+    }
+
+    public static List<Game> serchGameByGenre(String gameGenreSearched, List<Game> games) {
+        return games.stream().filter(game -> game.getGenre().equals(gameGenreSearched)).toList();
+    }
+
+    public static List<Game> searchGameByStudio(String gameStudioSearched, List<Game> games) {
+        return games.stream().filter(game -> game.getStudio().equals(gameStudioSearched)).toList();
     }
 
 }
