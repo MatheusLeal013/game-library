@@ -21,7 +21,7 @@ public class GameService {
     }
 
     public static void createGame(Game newGame, List<Game> gamesList) {
-       createGameFile(newGame);
+        createGameFile(newGame);
         gamesList.add(newGame);
     }
 
@@ -74,11 +74,11 @@ public class GameService {
         }
     }
 
-    public static void updateSynopsis(String gameName, StringBuilder newSynopsis, List<Game> games) {
+    public static void updateSynopsis(String gameName, String newSynopsis, List<Game> games) {
         Game outdatedGame = searchGameByName(gameName, games);
         if (outdatedGame != null) {
             deleteGameFile(outdatedGame.getName());
-            outdatedGame.setSynopsis(newSynopsis.toString());
+            outdatedGame.setSynopsis(newSynopsis);
             createGameFile(outdatedGame);
         }
     }
