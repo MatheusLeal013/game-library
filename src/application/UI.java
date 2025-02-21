@@ -20,13 +20,13 @@ public class UI {
     }
 
     public static void mainMenu(List<Game> games) {
-        displayMainMenu();
-
-        int mainMenuOption = optionMenu(0, 6);
-
-        sc.nextLine();
-
-        chooseTheMainMenuOption(mainMenuOption, games);
+        int mainMenuOption;
+        do {
+            displayMainMenu();
+            mainMenuOption = optionMenu(1, 6);
+            sc.nextLine();
+            chooseTheMainMenuOption(mainMenuOption, games);
+        } while(mainMenuOption != 6);
     }
 
     public static void newGameMenu(List<Game> games) {
@@ -35,7 +35,7 @@ public class UI {
         Game newGame = processGameCreation(games);
         GameService.createGame(newGame, games);
 
-        System.out.println(newGame.getName() + " was created.");
+        postGameCreationMenu(games);
     }
 
     public static void gameUpdateMenu(List<Game> games) {
@@ -46,13 +46,13 @@ public class UI {
 
         displayUpdateMenu();
 
-        int updateMenuOption = optionMenu(0, 6);
+        int updateMenuOption = optionMenu(1, 6);
 
         sc.nextLine();
 
         chooseUpdateMenuOption(updateMenuOption, updatedGameName, games);
 
-        System.out.println(updatedGameName + " has been updated.");
+        postGameUpdateMenu(games);
     }
 
     public static void gameSearchMenu(List<Game> games) {
@@ -74,6 +74,47 @@ public class UI {
         GameService.deleteGameList(gameNameDeleted, games);
 
         System.out.println(gameNameDeleted + " was deleted.");
+    }
+
+    public static void postGameCreationMenu(List<Game> games) {
+        System.out.println("1 - Create a new game again");
+        System.out.println("2 - Return to main menu");
+
+        int option = optionMenu(1, 2);
+
+        sc.nextLine();
+
+        if (option == 1) {
+            newGameMenu(games);
+        }
+    }
+
+    public static void postGameUpdateMenu(List<Game> games) {
+        System.out.println("1 - Update game from library again");
+        System.out.println("2 - Return to main menu");
+
+        int option = optionMenu(1, 2);
+
+        sc.nextLine();
+
+        if (option == 1) {
+            gameUpdateMenu(games);
+        }
+    }
+
+    public static void postGameSearchMenuByName(String gameName, List<Game> games) {
+        System.out.println("1 - Display found game information");
+        System.out.println("2 - Return to search menu");
+        System.out.println("3 - Return to main menu");
+
+        int option = optionMenu(1, 3);
+
+        switch (option) {
+            case 1:
+                GameService.showGame(gameName);
+            case 2:
+                gameSearchMenu(games);
+        }
     }
 
     public static void displayMainMenu() {
@@ -101,6 +142,7 @@ public class UI {
         System.out.println("2 - Search games by release date");
         System.out.println("3 - Search games by genre");
         System.out.println("4 - Search games by studio");
+        System.out.println("5 - Return to main menu");
     }
 
     public static Game processGameCreation(List<Game> games) {
@@ -118,6 +160,8 @@ public class UI {
         String genre = sc.nextLine();
 
         String synopsis = processSynopsis();
+
+        System.out.println(name + " was created.");
 
         return new Game(name, LocalDate.parse(releaseDate, fmt), studio, genre, synopsis);
     }
@@ -164,12 +208,13 @@ public class UI {
             System.out.print("The game you were looking for was not found, enter the name of another game: ");
             gameNameSearched = sc.nextLine();
         }
-        System.out.println("Game found, game information below: ");
-        GameService.showGame(gameNameSearched);
+        System.out.println(gameNameSearched + " found");
+
+        postGameSearchMenuByName(gameNameSearched, games);
     }
 
     public static void processGameSearchByReleaseDate(List<Game>games) {
-        System.out.print("Enter the release date to search for games with this date: ");
+        System.out.println("Enter the release date to search for games with this date: ");
         String searchedGamesreleaseDate = processReleaseDate();
         if (GameService.searchGameByReleaseDate(searchedGamesreleaseDate, games) == null) {
             System.out.println("The games were not found with the release date stated!");
@@ -199,10 +244,10 @@ public class UI {
     }
     public static int optionMenu(int firstOption, int lastOption) {
         System.out.print("Choose a number to perform any of the operations above: ");
-        int menuOption = catchOption();
-        while (menuOption <= firstOption || menuOption > lastOption) {
+        int menuOption = getNumericOption();
+        while (menuOption < firstOption || menuOption > lastOption) {
             System.out.print("Invalid option! Choose another number to perform any of the operations above: ");
-            menuOption = catchOption();
+            menuOption = getNumericOption();
         }
         return menuOption;
     }
@@ -225,8 +270,6 @@ public class UI {
             case 5:
                 gameDeleteMenu(games);
                 break;
-            case 6:
-                System.exit(0);
         }
     }
 
@@ -258,8 +301,9 @@ public class UI {
                 GameService.updateSynopsis(updatedGameName, newSynopsis, games);
                 break;
             case 6:
-                mainMenu(games);
+                return;
         }
+        System.out.println(updatedGameName + " has been updated.");
     }
 
     public static void chooseOptionFromSearchMenu(int searchMenuOption, List<Game> games) {
@@ -291,7 +335,8 @@ public class UI {
         return gameName;
     }
 
-    public static int catchOption() {
+
+    public static int getNumericOption() {
         int option = 0;
         try {
             option = sc.nextInt();

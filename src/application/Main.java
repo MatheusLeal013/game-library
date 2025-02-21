@@ -8,8 +8,6 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         List<Game> games = GameService.init();
-        while (true) {
-            UI.mainMenu(games);
-        }
+        UI.mainMenu(games);
     }
 }
