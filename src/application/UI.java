@@ -66,12 +66,20 @@ public class UI {
     }
 
     public static void gameDeleteMenu(List<Game> games) {
-        System.out.println("Enter the name of the game you want to delete: ");
-        String gameNameDeleted = getGameName(games);
+        System.out.println("1 - Choose game to be deleted");
+        System.out.println("2 - Return to main menu");
 
-        GameService.deleteGameList(gameNameDeleted, games);
+        int option = optionMenu(1, 2);
 
-        System.out.println(gameNameDeleted + " was deleted.");
+        switch (option) {
+            case 1:
+                String gameNameDeleted = getGameName(games);
+                GameService.deleteGameList(gameNameDeleted, games);
+                System.out.println(gameNameDeleted + " was deleted.");
+                break;
+            case 2:
+                return;
+        }
 
         postDeletionMenu(games);
     }
